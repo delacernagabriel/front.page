@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scary Story Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap'); /* Spooky font */
+        body { 
+            font-family: 'Creepster', cursive; 
+            background: linear-gradient(135deg, #000000, #1a0a0a, #4B0000, #8B4513, #2F1B14); /* Darker, more ominous Halloween gradient */
+            color: #fff; 
+            text-align: center; 
+            padding: 20px; 
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        h1, h2 { text-shadow: 2px 2px 4px #000; }
+        .slide { 
+            display: none; 
+            padding: 20px; 
+            border: 2px solid #4B0000; 
+            margin: 20px auto; 
+            max-width: 600px; 
+            background-color: rgba(0, 0, 0, 0.95); 
+            box-shadow: 0 0 20px #4B0000; 
+            border-radius: 10px;
+        }
+        .active { display: block; }
+        button { 
+            background-color: #4B0000; 
+            color: #fff; 
+            border: 2px solid #8B4513; 
+            padding: 10px 20px; 
+            margin: 10px; 
+            cursor: pointer; 
+            font-family: 'Creepster', cursive;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #4B0000;
+        }
+        button:hover { 
+            background-color: #2F1B14; 
+            box-shadow: 0 0 15px #4B0000;
+        }
+        .pumpkin { 
+            width: 50px; 
+            height: 50px; 
+            background: url('https://i.imgur.com/pumpkin.png') no-repeat center; /* Placeholder, replace with actual pumpkin image */
+            background-size: cover;
+            display: inline-block;
+            margin: 10px;
+        }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; } /* More intense flicker */
+        }
+        .flicker { animation: flicker 2s infinite; }
+    </style>
+</head>
+<body>
+    <h1 class="flicker">Scary Story Generator</h1>
+    <p>Navigate through the slides to build your spooky tale!</p>
+    <div class="pumpkin"></div><div class="pumpkin"></div><div class="pumpkin"></div>
+
+    <div id="slide1" class="slide active">
+        <h2>Slide 1: Choose Your Setting</h2>
+        <p>You find yourself in a...</p>
+        <button onclick="nextSlide(1, 'haunted house')">Haunted House</button>
+        <button onclick="nextSlide(1, 'dark forest')">Dark Forest</button>
+        <button onclick="nextSlide(1, 'abandoned asylum')">Abandoned Asylum</button>
+    </div>
+
+    <div id="slide2" class="slide">
+        <h2>Slide 2: What Do You Hear?</h2>
+        <p>As you enter the <span id="setting"></span>, you hear...</p>
+        <button onclick="nextSlide(2, 'whispers')">Whispers</button>
+        <button onclick="nextSlide(2, 'footsteps')">Footsteps</button>
+        <button onclick="nextSlide(2, 'laughter')">Laughter</button>
+    </div>
+
+    <div id="slide3" class="slide">
+        <h2>Slide 3: What Appears?</h2>
+        <p>Suddenly, <span id="sound"></span> grow louder, and you see...</p>
+        <button onclick="nextSlide(3, 'a shadow')">A Shadow</button>
+        <button onclick="nextSlide(3, 'a ghost')">A Ghost</button>
+        <button onclick="nextSlide(3, 'eyes in the dark')">Eyes in the Dark</button>
+    </div>
+
+    <div id="slide4" class="slide">
+        <h2>Slide 4: The Climax</h2>
+        <p>The <span id="appearance"></span> approaches, and...</p>
+        <p id="story"></p>
+        <button onclick="restart()">Generate Another Story</button>
+    </div>
+
+    <script>
+        let story = { setting: '', sound: '', appearance: '' };
+
+        function nextSlide(current, choice) {
+            document.getElementById('slide' + current).classList.remove('active');
+            if (current === 1) story.setting = choice;
+            else if (current === 2) story.sound = choice;
+            else if (current === 3) {
+                story.appearance = choice;
+                generateEnding();
+            }
+            document.getElementById('slide' + (current + 1)).classList.add('active');
+            updatePlaceholders();
+        }
+
+        function updatePlaceholders() {
+            document.getElementById('setting').textContent = story.setting;
+            document.getElementById('sound').textContent = story.sound;
+            document.getElementById('appearance').textContent = story.appearance;
+        }
+
+        function generateEnding() {
+            const endings = {
+                'haunted house': {
+                    'whispers': { 'a shadow': 'the shadow whispers your name, revealing it's your long-lost twin who died tragically. You scream as it pulls you into the darkness!' },
+                    'a ghost': 'the ghost floats through walls, moaning about unfinished business. It possesses you, and you feel your body no longer yours!',
+                    'eyes in the dark': 'the eyes belong to a family of rats, but they speak in human voices, cursing you for entering their domain!'
+                },
+                'dark forest': {
+                    'footsteps': { 'a shadow': 'the shadow is a werewolf, and it howls as it chases you through the trees. You trip and feel claws on your back!' },
+                    'a ghost': 'the ghost is a lost hiker, warning you of a curse. Suddenly, vines wrap around your legs, pulling you underground!',
+                    'eyes in the dark': 'the eyes are from an ancient tree spirit, and it demands a sacrifice. Branches lash out, scratching your skin!'
+                },
+                'abandoned asylum': {
+                    'laughter': { 'a shadow': 'the shadow laughs maniacally, revealing itself as a patient who escaped. It locks you in a padded cell forever!' },
+                    'a ghost': 'the ghost is a doctor, injecting you with an invisible serum. You feel your mind unraveling into madness!',
+                    'eyes in the dark': 'the eyes are from hidden cameras, and a voice announces: "You're the next experiment." Doors slam shut!'
+                }
+            };
+            const ending = endings[story.setting][story.sound][story.appearance] || 'something terrifying happens, and you never escape!';
+            document.getElementById('story').textContent = ending;
+        }
+
+        function restart() {
+            story = { setting: '', sound: '', appearance: '' };
+            document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
+            document.getElementById('slide1').classList.add('active');
+            updatePlaceholders();
+            document.getElementById('story').textContent = '';
+        }
+    </script>
+</body>
+</html>
